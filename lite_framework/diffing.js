@@ -1,6 +1,6 @@
 /* 
                             ----- Diffing -----
-    Diffing is the process where a framework compares the old virtual DOM 
+    Diffing is the process where a framework compares the old virtual DOM
     with the new virtual DOM tree after the state changes.
     Goal: the figure out exactly what changed so the framework can update
     the real DOM efficiently without re-rendering everything.
