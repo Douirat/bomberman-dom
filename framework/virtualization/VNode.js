@@ -1,5 +1,6 @@
 export class VNode {
     nextVNodeId = 0;
+    #parent
     #id
     #type;
     #properties;
@@ -9,6 +10,7 @@ export class VNode {
 
     constructor(
         type,
+        parent=false,
         properties = {},
         events = {},
         children = [],
@@ -29,6 +31,10 @@ export class VNode {
 
     get type() {
         return this.#type;
+    }
+
+    get isParent(){
+        return this.#parent
     }
 
     get properties() {
@@ -52,6 +58,10 @@ export class VNode {
     // Setters
     set type(type) {
         this.#type = type
+    }
+
+    set parent(value){
+        this.#parent = value;
     }
 
     appendChild(child) {
