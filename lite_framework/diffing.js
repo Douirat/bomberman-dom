@@ -21,7 +21,7 @@
                                 {tag: "button", children: ["Count: 0"]}
                             ]
                 }
-    
+
     let newNode = {
                     tag: "div",
                     props: {id: "app"},
@@ -33,7 +33,7 @@
 
                     -- step1: compare tags.
     check if the node types are the same(div, h1, button).
-    <1> if the tags are different -> (replace the whle node).
+    <1> if the tags are different -> (replace the whole node).
     <2> if the tags are the same -> proceed to check props and children.
 
                     -- step2: compare props.

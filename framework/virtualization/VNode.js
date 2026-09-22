@@ -33,7 +33,7 @@ export class VNode {
         return this.#type;
     }
 
-    get isParent(){
+    get parent(){
         return this.#parent
     }
 
@@ -64,16 +64,21 @@ export class VNode {
         this.#parent = value;
     }
 
+    addProperty(key, value){
+        this.#properties[key] = value;
+    }
+
+    addEvent(event, handler){
+        this.#events[event]=handler;
+    }
+
     appendChild(child) {
         this.#children.push(child)
     }
 
-    // Depletes
-
-    removeChild(id) {
-        // the remove child implementation.
+    set text(text){
+        this.#text = text;
     }
-
 
     /*
     <<The rendering system is the core engine of every frontend
@@ -122,8 +127,9 @@ export class VNode {
 
         return element;
     }
-    /*This mirrors the idea behind frameworks like React or Vue: separating the “description”
-    of the UI from the actual DOM, allowing us to reason about UI in pure JavaScript objects
-    rather than manipulating the DOM directly. */
-
+    /*
+    * This mirrors the idea behind frameworks like React or Vue: separating the “description”
+    * of the UI from the actual DOM, allowing us to reason about UI in pure JavaScript objects
+    * rather than manipulating the DOM directly.
+    */
 }
