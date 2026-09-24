@@ -4,7 +4,7 @@ export class VNodeBuilder{
     // The attribute that will hold the virtual node instance.
     #vNode;
     constructor () {
-        this.vNode = new VNode();
+        this.#vNode = new VNode();
     }
 
     type(type){

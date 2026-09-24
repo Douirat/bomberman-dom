@@ -16,7 +16,7 @@ export class VNode {
         children = [],
         text = ""
     ) {
-        this.#id = `VNode-${nextVNodeId++}`;
+        this.#id = `VNode-${this.nextVNodeId++}`;
         this.#type = type;
         this.#properties = properties;
         this.#events = events;
@@ -85,14 +85,14 @@ export class VNode {
     framework it's what turns your data components into real
     visible, HTML on the screen. >>
 --> What is the rendering system?
-    <1> Converts the virtulal {tag, attrs, children} UI description into actual DOM nodes.
+    <1> Converts the virtual {tag, attrs, children} UI description into actual DOM nodes.
     <2> updates the DOM when data changes or state changes.
     <3> Does it so efficiently {only changes what's necessary}.
 
     ==> Rendering is about creating the UI from data:
         let user = {"div", {class:"user"}, [{"h1", {class:"name"}, ["bennacer"]}, {"h1", {class:"age"}, ["34"]}]}
         ==> you want to display:
-        <div clas="user">
+        <div class="user">
             <h1>Bennacer</h1>
             <p>Age: 24</p>
         </div>
@@ -100,7 +100,7 @@ export class VNode {
     ==> In vanilla js the developer will have to do all the DOM work himself:
         let el = document.createElement("div");
         But, framework's rendering system automates that for you,
-        render(vertualDOMObject, parent)
+        render(virtualDOMObject, parent)
 */
     toHTMLElement() {
         let element = document.createElement(this.#type);
@@ -117,7 +117,7 @@ export class VNode {
 
         // Text
         if (this.#text) {
-            this.element.textContent(this.#text);
+           element.textContent = this.#text;
         }
 
         // Children
