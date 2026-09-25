@@ -1,9 +1,7 @@
 import { VNodeBuilder } from "./framework/virtualization/VNodeBuilder.js";
 import { VNode } from "./framework/virtualization/VNode.js";
 import { FrameworkBuilder } from "./framework/FrameworkBuilder.js";
-// import { Framework } from "./framework/Framework.js";
 
-console.log("test  test  test");
 
 const home = new VNodeBuilder()
     .type("div")

@@ -10,7 +10,7 @@ export class VNode {
 
     constructor(
         type,
-        parent=false,
+        parent = false,
         properties = {},
         events = {},
         children = [],
@@ -33,7 +33,7 @@ export class VNode {
         return this.#type;
     }
 
-    get parent(){
+    get parent() {
         return this.#parent
     }
 
@@ -60,23 +60,23 @@ export class VNode {
         this.#type = type
     }
 
-    set parent(value){
+    set parent(value) {
         this.#parent = value;
     }
 
-    addProperty(key, value){
+    addProperty(key, value) {
         this.#properties[key] = value;
     }
 
-    addEvent(event, handler){
-        this.#events[event]=handler;
+    addEvent(event, handler) {
+        this.#events[event] = handler;
     }
 
     appendChild(child) {
         this.#children.push(child)
     }
 
-    set text(text){
+    set text(text) {
         this.#text = text;
     }
 
@@ -90,11 +90,11 @@ export class VNode {
     <3> Does it so efficiently {only changes what's necessary}.
 
     ==> Rendering is about creating the UI from data:
-        let user = {"div", {class:"user"}, [{"h1", {class:"name"}, ["bennacer"]}, {"h1", {class:"age"}, ["34"]}]}
+        let user = {"div", {class:"user"}, [{"h1", {class:"name"}, ["name"]}, {"h1", {class:"age"}, ["34"]}]}
         ==> you want to display:
         <div class="user">
-            <h1>Bennacer</h1>
-            <p>Age: 24</p>
+            <h1>name</h1>
+            <p>Age: 34</p>
         </div>
 
     ==> In vanilla js the developer will have to do all the DOM work himself:
@@ -117,7 +117,7 @@ export class VNode {
 
         // Text
         if (this.#text) {
-           element.textContent = this.#text;
+            element.textContent = this.#text;
         }
 
         // Children
