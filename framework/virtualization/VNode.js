@@ -1,7 +1,7 @@
 export class VNode {
-    nextVNodeId = 0;
-    #parent
-    #id
+    static #nextKey = 1;
+    #parent;
+    #key;
     #type;
     #properties;
     #events;
@@ -16,8 +16,9 @@ export class VNode {
         children = [],
         text = ""
     ) {
-        this.#id = `VNode-${this.nextVNodeId++}`;
+        this.#key = `node-${VNode.#nextKey++}`;
         this.#type = type;
+        this.parent = parent;
         this.#properties = properties;
         this.#events = events;
         this.#children = children;
@@ -25,8 +26,8 @@ export class VNode {
     }
 
     // Getters
-    get id() {
-        return this.#id;
+    get key() {
+        return this.#key;
     }
 
     get type() {
@@ -56,6 +57,10 @@ export class VNode {
 
 
     // Setters
+    set key(key){
+        this.#key = key;
+    }
+
     set type(type) {
         this.#type = type
     }

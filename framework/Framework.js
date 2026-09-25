@@ -31,6 +31,7 @@ export class Framework {
           console.log("rendering --->", element);
         if(element instanceof VNode){
             this.#root.innerHTML = "";
+            element.key = `node-{this.#nextKey++}`;
             this.#routes[this.#currentPath] = element;
             this.#root.appendChild(element.toHTMLElement());
         }
