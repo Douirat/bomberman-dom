@@ -7,8 +7,8 @@ export class VNodeBuilder{
         this.#vNode = new VNode();
     }
 
-    type(type){
-        this.#vNode.type = type;
+    tag(tag){
+        this.#vNode.tag = tag;
         return this;
     }
 

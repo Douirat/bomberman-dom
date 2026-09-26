@@ -14,7 +14,7 @@ export class Framework {
         // this.#components = new Map();
         this.#routes = new Map();
         this.#routes["*"] = new VNodeBuilder()
-            .type("div")
+            .tag("div")
             .child(new VNode("p", false, { id: "error_text" }, {}, [], "Page doesn't exist"))
             .build();
     }
@@ -22,7 +22,6 @@ export class Framework {
     // For now i will run the framework and display objects based on the url.
     run() {
         this.#currentPath = window.location.pathname;
-        console.log("path ---> "+ this.#currentPath);
         let component = this.#routes[this.#currentPath];
         this.render(component)
     }
@@ -31,7 +30,6 @@ export class Framework {
           console.log("rendering --->", element);
         if(element instanceof VNode){
             this.#root.innerHTML = "";
-            element.key = `node-{this.#nextKey++}`;
             this.#routes[this.#currentPath] = element;
             this.#root.appendChild(element.toHTMLElement());
         }

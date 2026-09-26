@@ -1,15 +1,18 @@
 export class VNode {
     static #nextKey = 1;
+
+
+
     #parent;
     #key;
-    #type;
+    #tag;
     #properties;
     #events;
     #children;
     #text;
 
     constructor(
-        type,
+        tag,
         parent = false,
         properties = {},
         events = {},
@@ -17,7 +20,8 @@ export class VNode {
         text = ""
     ) {
         this.#key = `node-${VNode.#nextKey++}`;
-        this.#type = type;
+        console.log("CREATED VNODE:", this.#key);
+        this.#tag = tag;
         this.parent = parent;
         this.#properties = properties;
         this.#events = events;
@@ -30,8 +34,8 @@ export class VNode {
         return this.#key;
     }
 
-    get type() {
-        return this.#type;
+    get tag() {
+        return this.#tag;
     }
 
     get parent() {
@@ -57,12 +61,12 @@ export class VNode {
 
 
     // Setters
-    set key(key){
+    set key(key) {
         this.#key = key;
     }
 
-    set type(type) {
-        this.#type = type
+    set tag(tag) {
+        this.#tag = tag
     }
 
     set parent(value) {
@@ -108,7 +112,12 @@ export class VNode {
         render(virtualDOMObject, parent)
 */
     toHTMLElement() {
-        let element = document.createElement(this.#type);
+        let element = document.createElement(this.#tag);
+        element.dataset.vNodeKey = this.#key;
+
+        console.log("VNode key:", this.#key);
+        console.log("DOM key:", element.dataset.vNodeKey);
+        console.log("HTML:", element.outerHTML);
 
         // Properties:
         for (const [name, value] of Object.entries(this.#properties)) {

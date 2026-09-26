@@ -4,7 +4,7 @@ import { FrameworkBuilder } from "./framework/FrameworkBuilder.js";
 
 
 const home = new VNodeBuilder()
-    .type("div")
+    .tag("div")
     .child(
         new VNode(
             "h1",
@@ -35,12 +35,12 @@ const home = new VNodeBuilder()
     .build();
 
 let profile = new VNodeBuilder()
-    .type("div")
+    .tag("div")
     .parent(true)
     .property("class", 'container')
     .child(
         new VNodeBuilder()
-            .type("h1")
+            .tag("h1")
             .property("id", "text")
             .text("this is profile page")
             .build()
