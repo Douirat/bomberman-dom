@@ -61,7 +61,14 @@ export class Framework {
     bridge(node) {
         console.log("the node i want to map with", node);
         let vNode = Framework.HTMLToVNodes.get(node)
-        console.log("the parent element", vNode);
+        let newNode = new VNodeBuilder()
+                    .tag("strong")
+                    .text("test the affect of the bridge")
+                    .build();
+        vNode.appendChild(newNode);
+        console.log(this.#currentPath);
+        let origin = this.#routes[this.#currentPath];
+        console.log("check the affect: ", origin);
     }
 
 }
