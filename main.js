@@ -23,7 +23,8 @@ const home = new VNodeBuilder()
             {
                 click: () => {
                     history.pushState({}, "", "/profile");
-
+                    let element = document.getElementById("profile-button");
+                    framework.bridge(element.parentElement)
                     // Tell your framework that the URL changed
                     framework.run();
                 }

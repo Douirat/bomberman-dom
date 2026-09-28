@@ -6,6 +6,7 @@ export class Framework {
     #routes;
     #currentPath;
     static HTMLToVNodes = new WeakMap();
+    static VNodeToHTML = new WeakMap();
     // #components;
     constructor(root) {
         window.addEventListener("popstate", () => {
@@ -37,11 +38,12 @@ export class Framework {
 
             this.#routes[this.#currentPath] = element;
 
-            const htmlElement = element.toHTMLElement(this.HTMLToVNodes);
+            const htmlElement = element.toHTMLElement();
 
             this.#root.appendChild(htmlElement);
 
             console.log("VNode:", Framework.HTMLToVNodes);
+            console.log("VNode: --->", Framework.VNodeToHTML);
         }
     }
 
@@ -52,7 +54,14 @@ export class Framework {
         return this;
     }
 
-    // create the bridge between user actions and the interface:
-    bridge() {
+    /**
+     * create the bridge between user actions and the framework:
+     *
+     */
+    bridge(node) {
+        console.log("the node i want to map with", node);
+        let vNode = Framework.HTMLToVNodes.get(node)
+        console.log("the parent element", vNode);
     }
+
 }

@@ -114,12 +114,12 @@ export class VNode {
         But, framework's rendering system automates that for you,
         render(virtualDOMObject, parent)
 */
-    toHTMLElement(HTMLToVNodes) {
+    toHTMLElement() {
         let element = document.createElement(this.#tag);
         element.dataset.vNodeKey = this.#key;
 
-       Framework.HTMLToVNodes.set(element, this);
-
+        Framework.HTMLToVNodes.set(element, this);
+        Framework.VNodeToHTML.set(this, element);
         // console.log("VNode key:", this.#key);
         // console.log("DOM key:", element.dataset.vNodeKey);
         // console.log("HTML:", element.outerHTML);
