@@ -1,3 +1,5 @@
+import { Framework } from "../Framework.js";
+
 export class VNode {
     static #nextKey = 1;
 
@@ -11,6 +13,7 @@ export class VNode {
     #children;
     #text;
 
+
     constructor(
         tag,
         parent = false,
@@ -20,7 +23,6 @@ export class VNode {
         text = ""
     ) {
         this.#key = `node-${VNode.#nextKey++}`;
-        console.log("CREATED VNODE:", this.#key);
         this.#tag = tag;
         this.parent = parent;
         this.#properties = properties;
@@ -57,6 +59,7 @@ export class VNode {
     get text() {
         return this.#text;
     }
+
 
 
 
@@ -111,13 +114,15 @@ export class VNode {
         But, framework's rendering system automates that for you,
         render(virtualDOMObject, parent)
 */
-    toHTMLElement() {
+    toHTMLElement(HTMLToVNodes) {
         let element = document.createElement(this.#tag);
         element.dataset.vNodeKey = this.#key;
 
-        console.log("VNode key:", this.#key);
-        console.log("DOM key:", element.dataset.vNodeKey);
-        console.log("HTML:", element.outerHTML);
+       Framework.HTMLToVNodes.set(element, this);
+
+        // console.log("VNode key:", this.#key);
+        // console.log("DOM key:", element.dataset.vNodeKey);
+        // console.log("HTML:", element.outerHTML);
 
         // Properties:
         for (const [name, value] of Object.entries(this.#properties)) {

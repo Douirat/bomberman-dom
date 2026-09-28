@@ -5,6 +5,7 @@ export class Framework {
     #root;
     #routes;
     #currentPath;
+    static HTMLToVNodes = new WeakMap();
     // #components;
     constructor(root) {
         window.addEventListener("popstate", () => {
@@ -19,6 +20,8 @@ export class Framework {
             .build();
     }
 
+
+
     // For now i will run the framework and display objects based on the url.
     run() {
         this.#currentPath = window.location.pathname;
@@ -26,19 +29,30 @@ export class Framework {
         this.render(component)
     }
 
+
+
     render(element) {
-          console.log("rendering --->", element);
-        if(element instanceof VNode){
+        if (element instanceof VNode) {
             this.#root.innerHTML = "";
+
             this.#routes[this.#currentPath] = element;
-            this.#root.appendChild(element.toHTMLElement());
+
+            const htmlElement = element.toHTMLElement(this.HTMLToVNodes);
+
+            this.#root.appendChild(htmlElement);
+
+            console.log("VNode:", Framework.HTMLToVNodes);
         }
     }
 
-    addRoute(path, node){
-        if( typeof path == "string" && node instanceof VNode){
+    addRoute(path, node) {
+        if (typeof path == "string" && node instanceof VNode) {
             this.#routes[path] = node;
         }
         return this;
+    }
+
+    // create the bridge between user actions and the interface:
+    bridge() {
     }
 }
