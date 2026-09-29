@@ -58,17 +58,53 @@ export class Framework {
      * create the bridge between user actions and the framework:
      *
      */
-    bridge(node) {
+    bridge(node, fn) {
         console.log("the node i want to map with", node);
         let vNode = Framework.HTMLToVNodes.get(node)
         let newNode = new VNodeBuilder()
-                    .tag("strong")
-                    .text("test the affect of the bridge")
-                    .build();
+            .tag("strong")
+            .text("test the affect of the bridge")
+            .build();
         vNode.appendChild(newNode);
         console.log(this.#currentPath);
         let origin = this.#routes[this.#currentPath];
         console.log("check the affect: ", origin);
     }
 
+    static virtualize(
+        tag,
+        parent = false,
+        properties = {},
+        events = {},
+        children = [],
+        text = ""
+    ) {
+        let vNode = new VNodeBuilder();
+
+        vNode.tag(tag)
+        vNode.parent(parent)
+        for (const [key, value] of Object.entries(properties)) {
+            vNode.property(key, value)
+        }
+        for (const [key, value] of Object.entries(events)) {
+            vNode.event(key, value)
+        }
+
+        // Text
+        if (text) {
+            vNode.text(text)
+        }
+
+        // Children
+        for (child of children){
+            if(child instanceof VNode){
+                vNode.child(child)
+            }
+        }
+
+        vNode = vNode.build()
+        return vNode;
+    }
+
 }
+

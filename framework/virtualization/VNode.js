@@ -115,6 +115,9 @@ export class VNode {
         render(virtualDOMObject, parent)
 */
     toHTMLElement() {
+        if(this.#tag == null && this.#text.length > 0){
+            return this.#text;
+        }
         let element = document.createElement(this.#tag);
         element.dataset.vNodeKey = this.#key;
 
