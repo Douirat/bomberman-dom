@@ -54,7 +54,7 @@ const profile = Framework.virtualize(
             { id: "home-button" },
             {
                 click: () => {
-                   framework.navigate("/")
+                   framework.navigate("/test")
                 }
             },
             [],

@@ -6,27 +6,26 @@ export class Framework {
     #root;
     #routes;
     #currentPath;
+    #notFound = "*"
     static HTMLToVNodes = new WeakMap();
     static VNodeToHTML = new WeakMap();
 
 
     constructor(root) {
-    this.#root = document.getElementById(root);
-    this.#routes = new Map();
-
-    this.#currentPath = window.location.pathname;
-
-    window.addEventListener("popstate", () => {
-        console.log("triggered...");
+        this.#root = document.getElementById(root);
+        this.#routes = new Map();
 
         this.#currentPath = window.location.pathname;
 
-        this.render();
-    });
+        window.addEventListener("popstate", () => {
+            console.log("triggered...");
 
-    this.#routes.set(
-        "*",
-        new VNodeBuilder()
+            this.#currentPath = window.location.pathname;
+
+            this.render();
+        });
+
+        this.#routes["*"] = new VNodeBuilder()
             .tag("div")
             .child(
                 new VNode(
@@ -39,8 +38,7 @@ export class Framework {
                 )
             )
             .build()
-    );
-}
+    }
 
 
 
@@ -54,6 +52,9 @@ export class Framework {
     render() {
         console.log("the path has changed ", this.#currentPath);
         let element = this.#routes[this.#currentPath];
+        if (!element) {
+            element = this.#routes[this.#notFound];
+        };
         if (element instanceof VNode) {
             this.#root.innerHTML = "";
             console.log(this.#currentPath);
@@ -75,7 +76,7 @@ export class Framework {
         return this;
     }
 
-    navigate(path="*") {
+    navigate(path = "*") {
         history.pushState({}, "", path);
         this.#currentPath = window.location.pathname;
         this.render();
