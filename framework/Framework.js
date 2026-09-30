@@ -137,54 +137,123 @@ export class Framework {
  */
 bridge(transactionType, vNode, payload = {}) {
 
-    const vNode = Framework.HTMLToVNodes.get(node);
-
-    if (!vNode) {
-        return;
-    }
+    if(!vNode) return;
 
     switch (transactionType) {
 
-        case TransactionType.CREATE:
-            // ...
+        // ── Lifecycle ──
+        case TransactionType.MOUNT_VNODE:
+            this.render(vNode)
             break;
 
-        case TransactionType.APPEND_CHILD:
-            vNode.appendChild(value);
+        case TransactionType.UNMOUNT_VNODE:
+
             break;
 
-        case TransactionType.REMOVE_CHILD:
-            vNode.removeChild(value);
+        case TransactionType.REPLACE_VNODE:
+            
+            break;
+
+        // ── Identity ──
+        case TransactionType.UPDATE_KEY:
+
             break;
 
         case TransactionType.UPDATE_TAG:
-            vNode.tag = value;
+
             break;
 
-        case TransactionType.SET_PROPERTY:
-            vNode.properties[key] = value;
+        // ── Tree structure ──
+        case TransactionType.UPDATE_PARENT:
+
+            break;
+
+        case TransactionType.APPEND_CHILD:
+
+            break;
+
+        case TransactionType.INSERT_CHILD_AT:
+
+            break;
+
+        case TransactionType.REMOVE_CHILD:
+
+            break;
+
+        case TransactionType.REPLACE_CHILD:
+
+            break;
+
+        case TransactionType.MOVE_CHILD:
+
+            break;
+
+        case TransactionType.CLEAR_CHILDREN:
+
+            break;
+
+        case TransactionType.SET_CHILDREN:
+
+            break;
+
+        // ── Properties ──
+        case TransactionType.ADD_PROPERTY:
+
+            break;
+
+        case TransactionType.UPDATE_PROPERTY:
+
             break;
 
         case TransactionType.REMOVE_PROPERTY:
-            // ...
+
             break;
 
-        case TransactionType.SET_EVENT:
-            // ...
+        case TransactionType.SET_PROPERTIES:
+
+            break;
+
+        case TransactionType.CLEAR_PROPERTIES:
+
+            break;
+
+        // ── Events ──
+        case TransactionType.ADD_EVENT:
+
+            break;
+
+        case TransactionType.UPDATE_EVENT:
+
             break;
 
         case TransactionType.REMOVE_EVENT:
-            // ...
+
+            break;
+
+        case TransactionType.SET_EVENTS:
+
+            break;
+
+        case TransactionType.CLEAR_EVENTS:
+
+            break;
+
+        // ── Text ──
+        case TransactionType.SET_TEXT:
+
             break;
 
         case TransactionType.UPDATE_TEXT:
-            vNode.text = value;
-            break;
-    }
 
-    // old tree vs new tree
-    // diff
-    // reconcile
+            break;
+
+        case TransactionType.REMOVE_TEXT:
+
+            break;
+
+        default:
+            throw new Error(`Unknown transaction type: ${transactionType}`);
+    }
 }
 
     static virtualize(
