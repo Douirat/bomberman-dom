@@ -24,12 +24,11 @@ export class Framework {
 
 
     // For now i will run the framework and display objects based on the url.
-    run() {
+    init() {
         this.#currentPath = window.location.pathname;
         let component = this.#routes[this.#currentPath];
-        this.bridge("CREATE", component)
+        this.bridge("mount_vnode", component)
     }
-
 
 
     render(element) {
@@ -52,6 +51,10 @@ export class Framework {
             this.#routes[path] = node;
         }
         return this;
+    }
+
+    navigate(){
+        this.init()
     }
 
 /**
@@ -135,15 +138,15 @@ export class Framework {
  * const vNode = Framework.HTMLToVNodes.get(event.currentTarget);
  * framework.bridge(TransactionType.UPDATE_PROPERTY, vNode, { name: "class", value: "completed" });
  */
-bridge(transactionType, vNode, payload = {}) {
+bridge(transactionType, parent, payload = {}) {
 
-    if(!vNode) return;
+    if(!parent) return;
 
     switch (transactionType) {
 
         // ── Lifecycle ──
         case TransactionType.MOUNT_VNODE:
-            this.render(vNode)
+            this.render(parent)
             break;
 
         case TransactionType.UNMOUNT_VNODE:
@@ -151,7 +154,7 @@ bridge(transactionType, vNode, payload = {}) {
             break;
 
         case TransactionType.REPLACE_VNODE:
-            
+
             break;
 
         // ── Identity ──

@@ -24,15 +24,8 @@ const home = Framework.virtualize(
             {
                 click: () => {
                     history.pushState({}, "", "/profile");
-
-                    let element = document.getElementById("profile-button");
-
-                    framework.bridge(
-                        "navigation",
-                        element.parentElement
-                    );
-
-                    framework.run();
+                    // let element = document.getElementById("profile-button");
+                    framework.navigate()
                 }
             },
             [],
@@ -64,7 +57,7 @@ const profile = Framework.virtualize(
             {
                 click: () => {
                     history.pushState({}, "", "/");
-                    framework.run();
+                    framework.navigate();
                 }
             },
             [],
@@ -83,4 +76,4 @@ let framework = new FrameworkBuilder()
     .build();
 
 
-framework.run();
+framework.init();
