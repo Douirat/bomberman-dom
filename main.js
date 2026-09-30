@@ -23,9 +23,7 @@ const home = Framework.virtualize(
             { id: "profile-button" },
             {
                 click: () => {
-                    history.pushState({}, "", "/profile");
-                    // let element = document.getElementById("profile-button");
-                    framework.navigate()
+                     framework.navigate("/profile")
                 }
             },
             [],
@@ -56,8 +54,7 @@ const profile = Framework.virtualize(
             { id: "home-button" },
             {
                 click: () => {
-                    history.pushState({}, "", "/");
-                    framework.navigate();
+                   framework.navigate("/")
                 }
             },
             [],

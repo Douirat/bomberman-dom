@@ -8,33 +8,55 @@ export class Framework {
     #currentPath;
     static HTMLToVNodes = new WeakMap();
     static VNodeToHTML = new WeakMap();
-    // #components;
+
+
     constructor(root) {
-        window.addEventListener("popstate", () => {
-            this.render()
-        })
-        this.#root = document.getElementById(root);
-        this.#routes = new Map();
-        this.#routes["*"] = new VNodeBuilder()
+    this.#root = document.getElementById(root);
+    this.#routes = new Map();
+
+    this.#currentPath = window.location.pathname;
+
+    window.addEventListener("popstate", () => {
+        console.log("triggered...");
+
+        this.#currentPath = window.location.pathname;
+
+        this.render();
+    });
+
+    this.#routes.set(
+        "*",
+        new VNodeBuilder()
             .tag("div")
-            .child(new VNode("p", false, { id: "error_text" }, {}, [], "Page doesn't exist"))
-            .build();
-    }
+            .child(
+                new VNode(
+                    "p",
+                    false,
+                    { id: "error_text" },
+                    {},
+                    [],
+                    "Page doesn't exist"
+                )
+            )
+            .build()
+    );
+}
 
 
 
     // For now i will run the framework and display objects based on the url.
     init() {
-        this.#currentPath = window.location.pathname;
         let component = this.#routes[this.#currentPath];
         this.bridge("mount_vnode", component)
     }
 
 
-    render(element) {
+    render() {
+        console.log("the path has changed ", this.#currentPath);
+        let element = this.#routes[this.#currentPath];
         if (element instanceof VNode) {
             this.#root.innerHTML = "";
-
+            console.log(this.#currentPath);
             this.#routes[this.#currentPath] = element;
 
             const htmlElement = element.toHTMLElement();
@@ -53,211 +75,213 @@ export class Framework {
         return this;
     }
 
-    navigate(){
-        this.init()
+    navigate(path="*") {
+        history.pushState({}, "", path);
+        this.#currentPath = window.location.pathname;
+        this.render();
     }
 
-/**
- * Single entry point for every change that affects a VNode.
- *
- * Application code never mutates a VNode directly. It describes the change
- * with a TransactionType, and the bridge validates it, applies it to the
- * VNode, records it, and schedules the reconciliation with the DOM.
- *
- * Flow:
- *   1. Validate the target VNode and the payload.
- *   2. Capture the previous value (needed by the reconciler and for undo).
- *   3. Mutate the VNode through its own methods, which keep the parent
- *      pointers in sync.
- *   4. Record { type, key, payload, previous } in the pending queue.
- *   5. Flush the queue in one batch and reconcile using Framework.VNodeToHTML.
- *
- * Logic events (fetch, websocket) must not call this method. They update
- * state, and the re-render produces the transactions.
- *
- * @param {string} transactionType - A value from TransactionType.
- *        Never a raw string.
- * @param {VNode} vNode - The VNode the change applies to. For child
- *        operations this is the parent. To start from a DOM element, resolve
- *        it first with Framework.HTMLToVNodes.get(element).
- * @param {Object} [payload={}] - Data for the transaction. The shape
- *        depends on the type:
- *
- *   Lifecycle
- *     MOUNT_VNODE      { child, index? }
- *     UNMOUNT_VNODE    {}
- *     REPLACE_VNODE    { newNode }
- *
- *   Identity
- *     UPDATE_KEY       { key }
- *     UPDATE_TAG       { tag }
- *
- *   Tree structure
- *     UPDATE_PARENT    { parent }
- *     APPEND_CHILD     { child }
- *     INSERT_CHILD_AT  { child, index }
- *     REMOVE_CHILD     { child }
- *     REPLACE_CHILD    { oldChild, newChild }
- *     MOVE_CHILD       { child, toIndex }
- *     CLEAR_CHILDREN   {}
- *     SET_CHILDREN     { children }
- *
- *   Properties
- *     ADD_PROPERTY     { name, value }
- *     UPDATE_PROPERTY  { name, value }
- *     REMOVE_PROPERTY  { name }
- *     SET_PROPERTIES   { properties }
- *     CLEAR_PROPERTIES {}
- *
- *   Events
- *     ADD_EVENT        { event, handler }
- *     UPDATE_EVENT     { event, handler }
- *     REMOVE_EVENT     { event }
- *     SET_EVENTS       { events }
- *     CLEAR_EVENTS     {}
- *
- *   Text
- *     SET_TEXT         { text }
- *     UPDATE_TEXT      { text }
- *     REMOVE_TEXT      {}
- *
- * @throws {Error} If the transaction type is unknown, a required payload
- *         field is missing, an index is out of range, or the change would
- *         create a cycle in the tree.
- *
- * @example
- * // Change a label
- * framework.bridge(TransactionType.UPDATE_TEXT, labelNode, { text: "3 items left" });
- *
- * @example
- * // Add a child to a list
- * framework.bridge(TransactionType.APPEND_CHILD, listNode, { child: itemNode });
- *
- * @example
- * // From a DOM event: resolve the VNode first
- * const vNode = Framework.HTMLToVNodes.get(event.currentTarget);
- * framework.bridge(TransactionType.UPDATE_PROPERTY, vNode, { name: "class", value: "completed" });
- */
-bridge(transactionType, parent, payload = {}) {
+    /**
+     * Single entry point for every change that affects a VNode.
+     *
+     * Application code never mutates a VNode directly. It describes the change
+     * with a TransactionType, and the bridge validates it, applies it to the
+     * VNode, records it, and schedules the reconciliation with the DOM.
+     *
+     * Flow:
+     *   1. Validate the target VNode and the payload.
+     *   2. Capture the previous value (needed by the reconciler and for undo).
+     *   3. Mutate the VNode through its own methods, which keep the parent
+     *      pointers in sync.
+     *   4. Record { type, key, payload, previous } in the pending queue.
+     *   5. Flush the queue in one batch and reconcile using Framework.VNodeToHTML.
+     *
+     * Logic events (fetch, websocket) must not call this method. They update
+     * state, and the re-render produces the transactions.
+     *
+     * @param {string} transactionType - A value from TransactionType.
+     *        Never a raw string.
+     * @param {VNode} vNode - The VNode the change applies to. For child
+     *        operations this is the parent. To start from a DOM element, resolve
+     *        it first with Framework.HTMLToVNodes.get(element).
+     * @param {Object} [payload={}] - Data for the transaction. The shape
+     *        depends on the type:
+     *
+     *   Lifecycle
+     *     MOUNT_VNODE      { child, index? }
+     *     UNMOUNT_VNODE    {}
+     *     REPLACE_VNODE    { newNode }
+     *
+     *   Identity
+     *     UPDATE_KEY       { key }
+     *     UPDATE_TAG       { tag }
+     *
+     *   Tree structure
+     *     UPDATE_PARENT    { parent }
+     *     APPEND_CHILD     { child }
+     *     INSERT_CHILD_AT  { child, index }
+     *     REMOVE_CHILD     { child }
+     *     REPLACE_CHILD    { oldChild, newChild }
+     *     MOVE_CHILD       { child, toIndex }
+     *     CLEAR_CHILDREN   {}
+     *     SET_CHILDREN     { children }
+     *
+     *   Properties
+     *     ADD_PROPERTY     { name, value }
+     *     UPDATE_PROPERTY  { name, value }
+     *     REMOVE_PROPERTY  { name }
+     *     SET_PROPERTIES   { properties }
+     *     CLEAR_PROPERTIES {}
+     *
+     *   Events
+     *     ADD_EVENT        { event, handler }
+     *     UPDATE_EVENT     { event, handler }
+     *     REMOVE_EVENT     { event }
+     *     SET_EVENTS       { events }
+     *     CLEAR_EVENTS     {}
+     *
+     *   Text
+     *     SET_TEXT         { text }
+     *     UPDATE_TEXT      { text }
+     *     REMOVE_TEXT      {}
+     *
+     * @throws {Error} If the transaction type is unknown, a required payload
+     *         field is missing, an index is out of range, or the change would
+     *         create a cycle in the tree.
+     *
+     * @example
+     * // Change a label
+     * framework.bridge(TransactionType.UPDATE_TEXT, labelNode, { text: "3 items left" });
+     *
+     * @example
+     * // Add a child to a list
+     * framework.bridge(TransactionType.APPEND_CHILD, listNode, { child: itemNode });
+     *
+     * @example
+     * // From a DOM event: resolve the VNode first
+     * const vNode = Framework.HTMLToVNodes.get(event.currentTarget);
+     * framework.bridge(TransactionType.UPDATE_PROPERTY, vNode, { name: "class", value: "completed" });
+     */
+    bridge(transactionType, parent, payload = {}) {
 
-    if(!parent) return;
+        if (!parent) return;
 
-    switch (transactionType) {
+        switch (transactionType) {
 
-        // ── Lifecycle ──
-        case TransactionType.MOUNT_VNODE:
-            this.render(parent)
-            break;
+            // ── Lifecycle ──
+            case TransactionType.MOUNT_VNODE:
+                this.render(parent)
+                break;
 
-        case TransactionType.UNMOUNT_VNODE:
+            case TransactionType.UNMOUNT_VNODE:
 
-            break;
+                break;
 
-        case TransactionType.REPLACE_VNODE:
+            case TransactionType.REPLACE_VNODE:
 
-            break;
+                break;
 
-        // ── Identity ──
-        case TransactionType.UPDATE_KEY:
+            // ── Identity ──
+            case TransactionType.UPDATE_KEY:
 
-            break;
+                break;
 
-        case TransactionType.UPDATE_TAG:
+            case TransactionType.UPDATE_TAG:
 
-            break;
+                break;
 
-        // ── Tree structure ──
-        case TransactionType.UPDATE_PARENT:
+            // ── Tree structure ──
+            case TransactionType.UPDATE_PARENT:
 
-            break;
+                break;
 
-        case TransactionType.APPEND_CHILD:
+            case TransactionType.APPEND_CHILD:
 
-            break;
+                break;
 
-        case TransactionType.INSERT_CHILD_AT:
+            case TransactionType.INSERT_CHILD_AT:
 
-            break;
+                break;
 
-        case TransactionType.REMOVE_CHILD:
+            case TransactionType.REMOVE_CHILD:
 
-            break;
+                break;
 
-        case TransactionType.REPLACE_CHILD:
+            case TransactionType.REPLACE_CHILD:
 
-            break;
+                break;
 
-        case TransactionType.MOVE_CHILD:
+            case TransactionType.MOVE_CHILD:
 
-            break;
+                break;
 
-        case TransactionType.CLEAR_CHILDREN:
+            case TransactionType.CLEAR_CHILDREN:
 
-            break;
+                break;
 
-        case TransactionType.SET_CHILDREN:
+            case TransactionType.SET_CHILDREN:
 
-            break;
+                break;
 
-        // ── Properties ──
-        case TransactionType.ADD_PROPERTY:
+            // ── Properties ──
+            case TransactionType.ADD_PROPERTY:
 
-            break;
+                break;
 
-        case TransactionType.UPDATE_PROPERTY:
+            case TransactionType.UPDATE_PROPERTY:
 
-            break;
+                break;
 
-        case TransactionType.REMOVE_PROPERTY:
+            case TransactionType.REMOVE_PROPERTY:
 
-            break;
+                break;
 
-        case TransactionType.SET_PROPERTIES:
+            case TransactionType.SET_PROPERTIES:
 
-            break;
+                break;
 
-        case TransactionType.CLEAR_PROPERTIES:
+            case TransactionType.CLEAR_PROPERTIES:
 
-            break;
+                break;
 
-        // ── Events ──
-        case TransactionType.ADD_EVENT:
+            // ── Events ──
+            case TransactionType.ADD_EVENT:
 
-            break;
+                break;
 
-        case TransactionType.UPDATE_EVENT:
+            case TransactionType.UPDATE_EVENT:
 
-            break;
+                break;
 
-        case TransactionType.REMOVE_EVENT:
+            case TransactionType.REMOVE_EVENT:
 
-            break;
+                break;
 
-        case TransactionType.SET_EVENTS:
+            case TransactionType.SET_EVENTS:
 
-            break;
+                break;
 
-        case TransactionType.CLEAR_EVENTS:
+            case TransactionType.CLEAR_EVENTS:
 
-            break;
+                break;
 
-        // ── Text ──
-        case TransactionType.SET_TEXT:
+            // ── Text ──
+            case TransactionType.SET_TEXT:
 
-            break;
+                break;
 
-        case TransactionType.UPDATE_TEXT:
+            case TransactionType.UPDATE_TEXT:
 
-            break;
+                break;
 
-        case TransactionType.REMOVE_TEXT:
+            case TransactionType.REMOVE_TEXT:
 
-            break;
+                break;
 
-        default:
-            throw new Error(`Unknown transaction type: ${transactionType}`);
+            default:
+                throw new Error(`Unknown transaction type: ${transactionType}`);
+        }
     }
-}
 
     static virtualize(
         tag,
