@@ -88,6 +88,13 @@ export class VNode {
         this.#children.push(child)
     }
 
+    removeChild(child) {
+        const index = this.#children.indexOf(child);
+
+        if (index !== -1) {
+            this.#children.splice(index, 1);
+        }
+    }
     set text(text) {
         this.#text = text;
     }
@@ -115,7 +122,7 @@ export class VNode {
         render(virtualDOMObject, parent)
 */
     toHTMLElement() {
-        if(this.#tag == null && this.#text.length > 0){
+        if (this.#tag == null && this.#text.length > 0) {
             return this.#text;
         }
         let element = document.createElement(this.#tag);

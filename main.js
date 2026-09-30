@@ -1,73 +1,86 @@
-import { VNodeBuilder } from "./framework/virtualization/VNodeBuilder.js";
-import { VNode } from "./framework/virtualization/VNode.js";
+import { Framework } from "./framework/Framework.js";
 import { FrameworkBuilder } from "./framework/FrameworkBuilder.js";
 
 
-const home = new VNodeBuilder()
-    .tag("div")
-    .child(
-        new VNode(
+const home = Framework.virtualize(
+    "div",
+    false,
+    {},
+    {},
+    [
+        Framework.virtualize(
             "h1",
             false,
             {},
             {},
             [],
             "Home"
-        )
-    )
-    .child(
-        new VNode(
+        ),
+
+        Framework.virtualize(
             "button",
             false,
             { id: "profile-button" },
             {
                 click: () => {
                     history.pushState({}, "", "/profile");
+
                     let element = document.getElementById("profile-button");
-                    framework.bridge(element.parentElement)
-                    // Tell your framework that the URL changed
+
+                    framework.bridge(
+                        "navigation",
+                        element.parentElement
+                    );
+
                     framework.run();
                 }
             },
             [],
             "Go to Profile"
         )
-    )
-    .build();
+    ]
+);
 
-let profile = new VNodeBuilder()
-    .tag("div")
-    .parent(true)
-    .property("class", 'container')
-    .child(
-        new VNodeBuilder()
-            .tag("h1")
-            .property("id", "text")
-            .text("this is profile page")
-            .build()
-    )
-    .child(
-        new VNode(
+
+const profile = Framework.virtualize(
+    "div",
+    true,
+    { class: "container" },
+    {},
+    [
+        Framework.virtualize(
+            "h1",
+            false,
+            { id: "text" },
+            {},
+            [],
+            "this is profile page"
+        ),
+
+        Framework.virtualize(
             "button",
             false,
             { id: "home-button" },
             {
                 click: () => {
                     history.pushState({}, "", "/");
-
-                    // Tell your framework that the URL changed
                     framework.run();
                 }
             },
             [],
             "Go to Home"
         )
-    )
-    .build();
+    ]
+);
+
+
+const posts = Framework.virtualize()
+
 
 let framework = new FrameworkBuilder()
     .route("/", home)
     .route("/profile", profile)
     .build();
 
-framework.run()
+
+framework.run();
