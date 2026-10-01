@@ -22,6 +22,12 @@ export class Framework {
 
             this.#currentPath = window.location.pathname;
 
+            let exist = this.#routes[this.#currentPath] == null ? false : true ;
+
+            if(!exist) {
+                this.#currentPath = "*"
+            }
+
             this.render();
         });
 
@@ -31,10 +37,10 @@ export class Framework {
                 new VNode(
                     "p",
                     false,
-                    { id: "error_text" },
+                    { id: "node_found" },
                     {},
                     [],
-                    "Page doesn't exist"
+                    "404 page not found!"
                 )
             )
             .build()
