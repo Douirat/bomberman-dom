@@ -25,7 +25,7 @@ const home = Framework.virtualize(
             { id: "profile-button" },
             {
                 click: () => {
-                     framework.navigate("/profile")
+                    framework.navigate("/profile")
                 }
             },
             [],
@@ -56,11 +56,11 @@ const profile = Framework.virtualize(
             { id: "posts-button" },
             {
                 click: () => {
-                   framework.navigate("/posts")
+                    framework.navigate("/posts")
                 }
             },
             [],
-            "Go to Home"
+            "Go to posts"
         )
     ]
 );
@@ -145,7 +145,19 @@ const posts = Framework.virtualize(
         titleInput,
         contentInput,
         addButton,
-        postsList
+        postsList,
+        Framework.virtualize(
+            "button",
+            false,
+            { id: "posts-button" },
+            {
+                click: () => {
+                    framework.navigate("/")
+                }
+            },
+            [],
+            "Go to Home"
+        )
     ]
 );
 

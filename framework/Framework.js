@@ -208,10 +208,11 @@ export class Framework {
                 break;
 
             case TransactionType.APPEND_CHILD:
-                if (node instanceof VNode) {
-                    node.appendChild(payload.child);
+                console.log("before addition: ", payload);
+                if (parent instanceof VNode) {
+                    parent.appendChild(payload.child);
                 }
-                console.log("check the change -----> ", this.#routes.get(this.#currentPath).children);
+                console.log("check the change -----> ", this.#routes.get(this.#currentPath));
                 break;
 
             case TransactionType.INSERT_CHILD_AT:
