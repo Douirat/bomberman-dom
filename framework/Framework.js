@@ -22,16 +22,16 @@ export class Framework {
 
             this.#currentPath = window.location.pathname;
 
-            let exist = this.#routes[this.#currentPath] == null ? false : true ;
+            let exist = this.#routes.get(this.#currentPath) == undefined ? false : true;
 
-            if(!exist) {
+            if (!exist) {
                 this.#currentPath = "*"
             }
 
             this.render();
         });
 
-        this.#routes["*"] = new VNodeBuilder()
+        this.#routes.set("*", new VNodeBuilder()
             .tag("div")
             .child(
                 new VNode(
@@ -44,40 +44,41 @@ export class Framework {
                 )
             )
             .build()
+        )
     }
 
 
 
     // For now i will run the framework and display objects based on the url.
     init() {
-        let component = this.#routes[this.#currentPath];
+        let component = this.#routes.get(this.#currentPath);
+        if (!component) {
+            component = this.#routes.get(this.#notFound);
+        }
         this.bridge("mount_vnode", component)
     }
 
 
     render() {
         console.log("the path has changed ", this.#currentPath);
-        let element = this.#routes[this.#currentPath];
+        let element = this.#routes.get(this.#currentPath);
         if (!element) {
-            element = this.#routes[this.#notFound];
-        };
+            element = this.#routes.get(this.#notFound);
+        }
         if (element instanceof VNode) {
             this.#root.innerHTML = "";
             console.log(this.#currentPath);
-            this.#routes[this.#currentPath] = element;
+            this.#routes.set(this.#currentPath, element);
 
             const htmlElement = element.toHTMLElement();
 
             this.#root.appendChild(htmlElement);
-
-            console.log("VNode:", Framework.HTMLToVNodes);
-            console.log("VNode: --->", Framework.VNodeToHTML);
         }
     }
 
     addRoute(path, node) {
         if (typeof path == "string" && node instanceof VNode) {
-            this.#routes[path] = node;
+            this.#routes.set(path, node);
         }
         return this;
     }
@@ -173,6 +174,10 @@ export class Framework {
 
         if (!parent) return;
 
+        let node = Framework.HTMLToVNodes.get(parent)
+
+
+
         switch (transactionType) {
 
             // ── Lifecycle ──
@@ -181,11 +186,11 @@ export class Framework {
                 break;
 
             case TransactionType.UNMOUNT_VNODE:
-
+                node = null;
                 break;
 
             case TransactionType.REPLACE_VNODE:
-
+                node = payload.node;
                 break;
 
             // ── Identity ──
@@ -203,7 +208,10 @@ export class Framework {
                 break;
 
             case TransactionType.APPEND_CHILD:
-
+                if (node instanceof VNode) {
+                    node.appendChild(payload.child);
+                }
+                console.log("check the change -----> ", this.#routes.get(this.#currentPath).children);
                 break;
 
             case TransactionType.INSERT_CHILD_AT:
@@ -289,6 +297,8 @@ export class Framework {
                 throw new Error(`Unknown transaction type: ${transactionType}`);
         }
     }
+
+
 
     static virtualize(
         tag,
