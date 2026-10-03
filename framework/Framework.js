@@ -320,7 +320,29 @@ export class Framework {
      */
 
     diff(oldNode, newNode) {
+        if(!oldNode) return { change: "create", node: newNode }
+        if(!newNode) return { change: "remove" }
+        if(oldNode?.tag != newNode?.tag) return { change: "replace", node: newNode }
+        if(!oldNode.tag && !newNode.tag && oldNode !== newNode) return { change: 'text', text: newNode };
+
+        if(oldNode.attrs && newNode.attrs) {
+            for (let key in newNode.attrs) {
+                if(newNode.attrs[key] !== oldNode.attrs[key]) {
+                    return { change: "attributes", node: newNode }
+                }
+            }
+        }
+
+        const patches = []
+        const childLength = Math.max(oldNode.children.length, newNode.children.length);
+        for (let i = 0; i < childLength; i++) {
+            patches.push(this.diff(oldNode?.children[i], newNode?.children[i]))
+        }
+        if(patches.length > 0) {
+            return { change: "update", childs: patches }
+        }
     }
+
 
 
 
