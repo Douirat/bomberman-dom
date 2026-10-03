@@ -71,5 +71,9 @@ export const Diff = (oldNode, newNode) => {
     if (patches.length > 0) {
         return { type: "update", childs: patches }
     }
+
+
+
 }
+
 

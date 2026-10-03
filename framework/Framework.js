@@ -304,6 +304,23 @@ export class Framework {
     }
 
 
+        /**
+     * =============== Diffing Algorithm Summary ===============
+     * 1. Compare the tags of the old and new nodes.
+     * 2. If the tags are different, replace the old node with the new node.
+     * 3. If the tags are the same, compare their attributes.
+     * 4. If any attribute differs, update only the changed attributes on the real DOM.
+     * 5. Compare the children of both nodes recursively.
+     * 6. If any child differs, update only that child on the real DOM.
+     * 7. If there are no differences, do nothing.
+     *no params cause the old vnode and the now vnode live in the maps originals and routes but that will creat a problem cause recursion is required.
+     * @param {object} oldNode - The old virtual DOM node.
+     * @param {object} newNode - The new virtual DOM node.
+     * @returns {object} - An object of patches describing the diffrence between the ols and the new vnode and the new Vnode { change: "create", node: newNode } or { change: "remove" } or { change: "replace", node: newNode } or { change: "text", text: newNode } or { change: "attributes", node: newNode } or { change: "update", childs: patches }
+     */
+
+    diff(oldNode, newNode) {
+    }
 
 
 
