@@ -4,6 +4,7 @@ import { TransactionType } from "./TransactionType.js";
 
 export class Framework {
     #root;
+    #originals;
     #routes;
     #currentPath;
     #notFound = "*"
@@ -13,6 +14,7 @@ export class Framework {
 
     constructor(root) {
         this.#root = document.getElementById(root);
+        this.#originals = new Map();
         this.#routes = new Map();
 
         this.#currentPath = window.location.pathname;
@@ -78,6 +80,7 @@ export class Framework {
 
     addRoute(path, node) {
         if (typeof path == "string" && node instanceof VNode) {
+            this.#originals.set(path, node.clone());
             this.#routes.set(path, node);
         }
         return this;
@@ -174,7 +177,7 @@ export class Framework {
 
         if (!parent) return;
 
-        let node = Framework.HTMLToVNodes.get(parent)
+        // let node = Framework.HTMLToVNodes.get(parent)
 
 
 
@@ -212,7 +215,8 @@ export class Framework {
                 if (parent instanceof VNode) {
                     parent.appendChild(payload.child);
                 }
-                console.log("check the change -----> ", this.#routes.get(this.#currentPath));
+                console.log("check the change in the oriinals -----> ", this.#originals.get(this.#currentPath).children);
+                console.log("check the change -----> ", this.#routes.get(this.#currentPath).children);
                 break;
 
             case TransactionType.INSERT_CHILD_AT:
@@ -298,6 +302,9 @@ export class Framework {
                 throw new Error(`Unknown transaction type: ${transactionType}`);
         }
     }
+
+
+
 
 
 

@@ -161,4 +161,25 @@ export class VNode {
     * of the UI from the actual DOM, allowing us to reason about UI in pure JavaScript objects
     * rather than manipulating the DOM directly.
     */
+
+    /**
+     * create a new VNode that is a copy of the current one, including its tag, properties, events, children, and text.
+     */
+    clone(parent = false) {
+        const cloned = new VNode(
+            this.#tag,
+            parent,
+            { ...this.#properties },
+            { ...this.#events },
+            [],
+            this.#text
+        );
+
+        for (const child of this.#children) {
+            const clonedChild = child.clone(cloned);
+            cloned.appendChild(clonedChild);
+        }
+
+        return cloned;
+    }
 }
