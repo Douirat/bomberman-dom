@@ -211,16 +211,18 @@ export class Framework {
                 break;
 
             case TransactionType.APPEND_CHILD:
-                console.log("before addition: ", payload);
                 if (parent instanceof VNode) {
                     parent.appendChild(payload.child);
-                    let patches = this.diff(this.#originals.get(this.#currentPath), this.#routes.get(this.#currentPath));
-                    console.log("the patches: ", patches);
-                    this.reconcile(patches, Framework.VNodeToHTML.get(this.#routes.get(this.#currentPath)));
-                }
-                console.log("check the change in the oriinals -----> ", this.#originals.get(this.#currentPath).children);
-                console.log("check the change -----> ", this.#routes.get(this.#currentPath).children);
 
+                    const current = this.#routes.get(this.#currentPath);
+                    const old = this.#originals.get(this.#currentPath);
+
+                    const patches = this.diff(old, current);
+                    this.reconcile(patches, Framework.VNodeToHTML.get(current));
+
+                    // snapshot AFTER applying the patches
+                    this.#originals.set(this.#currentPath, current.clone());
+                }
                 break;
 
             case TransactionType.INSERT_CHILD_AT:
@@ -355,32 +357,33 @@ export class Framework {
      * @param {object} patches - The object of patches describing the differences between the old and new virtual DOM nodes.
      * @param {HTMLElement} parentElement - The parent HTML element where the changes will be applied.
      */
-    reconcile(patches, parentElement) {
+    reconcile(patches, el) {
+        console.log("called");
         if (!patches) return;
         switch (patches.change) {
+            case "create":
+                el.appendChild(patches.node.toHTMLElement());
+                break;
             case "replace":
-                const newNode = patches.node.toHTMLElement();
-                parentElement.parentNode.replaceChild(newNode, parentElement);
+            case "attributes":
+                el.replaceWith(patches.node.toHTMLElement());
                 break;
             case "remove":
-                document.body.removeChild(parentElement);
+                el.remove();
                 break;
             case "text":
-                parentElement.textContent = patches.text;
-                break;
-            case "attributes":
-                parentElement.parentNode.replaceChild(patches.node.toHTMLElement(), parentElement)
+                el.textContent = patches.text;
                 break;
             case "update":
-                for (let childPatch of patches.childs) {
-                    const childElement = parentElement.childNodes[patches.childs.indexOf(childPatch)];
-                    if (childElement) {
-                        this.reconcile(childPatch, childElement);
+                patches.childs.forEach((childPatch, i) => {
+                    if (!childPatch) return;
+                    if (childPatch.change === "create") {
+                        el.appendChild(childPatch.node.toHTMLElement());
                     } else {
-                        parentElement.appendChild(childPatch.node.toHTMLElement());
+                        this.reconcile(childPatch, el.childNodes[i]);
                     }
-                    break;
-                }
+                });
+                break;
         }
     }
 
