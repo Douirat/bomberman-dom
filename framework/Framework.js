@@ -1,6 +1,6 @@
 import { VNode } from "./virtualization/VNode.js";
 import { VNodeBuilder } from "./virtualization/VNodeBuilder.js";
-import { TransactionType } from "./TransactionType.js";
+import { TransactionType } from "./checkers/TransactionType.js";
 
 export class Framework {
     #root;
