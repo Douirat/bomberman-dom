@@ -7,10 +7,14 @@ export const Subscription = Framework.virtualize(
     "form",
     false,
     {"id": "subscription-form"},
-    {"submit": ()=>{
-        console.log("the logic of submiting the subscription form will be implemented here.")
+    {"submit": (e)=>{
+        e.preventDefault()
+        const form = document.getElementById("subscription-form")
+        const usernameInput = form.querySelector("input[name='username']").value.trim()
+       
+        console.log(`Username submitted: ${usernameInput}`)
     }},
-    [Framework.virtualize("input", false, {"type": "email", "placeholder": "Enter your email", "name": "email", "required": true}), 
+    [Framework.virtualize("input", false, {"type": "text", "placeholder": "Enter your username", "name": "username", "required": true}), 
     Framework.virtualize("button", false, {"type": "submit"}, {}, [], "Subscribe")
 ],
 
