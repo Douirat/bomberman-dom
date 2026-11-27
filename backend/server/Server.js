@@ -25,15 +25,15 @@ export class Server {
 
                     case "subscribe":
                         
-                        this.#users.set(ws, { user: data.username, ws: ws })
+                        this.#users.set(ws, { user: data.content, ws: ws })
                         console.log(`User subscribed: ${data.content}`)
                         ws.send(JSON.stringify({ type: "subscribed", content: data.content }))
                         break;
 
                     case "message":
 
-                        console.log(`chat message was received from ${this.#users.get(ws).user} and the content is ${message.content}`)
-                        this.broadcast(JSON.stringify({ type: "chat", user: this.#users.get(ws).user, constent: message.content }))
+                        console.log(`chat message was received from ${this.#users.get(ws).user} and the content is ${data.content}`)
+                        this.broadcast(JSON.stringify({ type: "chat", user: this.#users.get(ws).user, content: data.content }))
                         break;
 
                     default:

@@ -57,7 +57,7 @@ function Chat() {
 
                     const input = e.currentTarget.elements.namedItem("message");
 
-                    console.log("Value:", input?.value);
+                    connector.sendMessage({ type: "message", content: input?.value ? input.value.trim() : "empty" });
                 }
             }, [
                 Framework.virtualize("input", false, { "type": "text", "placeholder": "Type your message", "name": "message", "required": true }),
