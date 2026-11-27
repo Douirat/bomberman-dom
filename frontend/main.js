@@ -12,7 +12,7 @@ const connector = new Connector(framework, "ws://localhost:3000");
     connector.connect();
 
 export function Subscription(){
-setTimeout(() => {
+// setTimeout(() => {
     return  Framework.virtualize(
        "form",
        false,
@@ -23,14 +23,14 @@ setTimeout(() => {
            const usernameInput = form.querySelector("input[name='username']").value.trim()
           
            console.log(`Username submitted: ${usernameInput}`)
-           
+           connector.subscribe(usernameInput)
        }},
        [Framework.virtualize("input", false, {"type": "text", "placeholder": "Enter your username", "name": "username", "required": true}), 
        Framework.virtualize("button", false, {"type": "submit"}, {}, [], "Subscribe")
    ],
    
    )
-}, 100)
+// }, 100)
 }
 
 
@@ -53,8 +53,8 @@ function Chat(){
            }})
        ]
     )
-    setTimeout(() => {
+    // setTimeout(() => {
         return ChatRoom
-    }, 100)
+    // }, 100)
 }
 
