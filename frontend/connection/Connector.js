@@ -18,7 +18,7 @@ export class Connector {
             const data = JSON.parse(e.data)
             switch (data.type){
                 case "subscribed":
-                    console.log(`Subscribed as ${data.username}`)
+                    console.log(`Subscribed as ${data.content}`)
                     this.#framework.navigate("/chat")
                     break;
                 case "chat":
@@ -37,7 +37,7 @@ export class Connector {
 
     sendMessage(message) {
         if (this.#socket && this.#socket.readyState === WebSocket.OPEN) {
-            this.#socket.send(JSON.stringify(message))
+            this.#socket.send(JSON.stringify({type: message.type, content: message.content}))
         } else {
             console.error("WebSocket is not open. Unable to send message.")
         }
@@ -46,12 +46,10 @@ export class Connector {
     subscribe(username) {
         const message = {
             type: "subscribe",
-            username: username
+            content: username
         }
         this.sendMessage(message)
     }
-
-
 }
 
 

@@ -16,20 +16,26 @@ export class Server {
             console.log("Client connected");
 
             ws.on("message", (message) => {
-                // console.log(`Received message: ${message.toString()}`);
+            
                 const data = JSON.parse(message.toString())
+
+                console.log(`Received message: ${message.toString()}`)
+
                 switch (data.type){
+
                     case "subscribe":
-                        console.log("touched");
                         
                         this.#users.set(ws, { user: data.username, ws: ws })
-                        console.log(`User subscribed: ${data.username}`)
-                        ws.send(JSON.stringify({ type: "subscribed", username: data.username }))
+                        console.log(`User subscribed: ${data.content}`)
+                        ws.send(JSON.stringify({ type: "subscribed", content: data.content }))
                         break;
-                    case "chat":
+
+                    case "message":
+
                         console.log(`chat message was received from ${this.#users.get(ws).user} and the content is ${message.content}`)
                         this.broadcast(JSON.stringify({ type: "chat", user: this.#users.get(ws).user, constent: message.content }))
                         break;
+
                     default:
                         console.log("Unknown message type")
                 }
