@@ -2,6 +2,9 @@ import {Subscription} from "./frontend/subscription/Subscription.js"
 import { FrameworkBuilder } from "./framework/FrameworkBuilder.js"
 import { Framework } from "./framework/Framework.js"
 
+const connector = new Connector("ws://localhost:3000");
+    connector.connect();
+
 const framework = new FrameworkBuilder()
                     .route("/", Subscribe())
                     .route("/chat", Chat())
