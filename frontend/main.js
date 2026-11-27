@@ -21,8 +21,6 @@ export function Subscription(){
            e.preventDefault()
            const form = document.getElementById("subscription-form")
            const usernameInput = form.querySelector("input[name='username']").value.trim()
-          
-           console.log(`Username submitted: ${usernameInput}`)
            connector.subscribe(usernameInput)
        }},
        [Framework.virtualize("input", false, {"type": "text", "placeholder": "Enter your username", "name": "username", "required": true}), 
@@ -49,6 +47,7 @@ function Chat(){
                const message = messageInput.value.trim()
                if(message){
                    console.log(`message sent: ${message}`)
+                     connector.sendMessage({type: "message", content: message})
                }
            }})
        ]

@@ -16,12 +16,19 @@ export class Server {
             console.log("Client connected");
 
             ws.on("message", (message) => {
-                console.log(`Received message: ${message.toString()}`);
-                switch (message.type){
+                // console.log(`Received message: ${message.toString()}`);
+                const data = JSON.parse(message.toString())
+                switch (data.type){
                     case "subscribe":
-                        const data = JSON.parse(message.toString())
+                        console.log("touched");
+                        
                         this.#users.set(ws, { user: data.username, ws: ws })
                         console.log(`User subscribed: ${data.username}`)
+                        ws.send(JSON.stringify({ type: "subscribed", username: data.username }))
+                        break;
+                    case "chat":
+                        console.log(`chat message was received from ${this.#users.get(ws).user} and the content is ${message.content}`)
+                        this.broadcast(JSON.stringify({ type: "chat", user: this.#users.get(ws).user, constent: message.content }))
                         break;
                     default:
                         console.log("Unknown message type")
@@ -39,12 +46,8 @@ export class Server {
     }
 
     broadcast(message) {
-        this.#wss.clients.forEach((client) => {
-
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(message);
-            }
-
-        });
+        for (const user of this.#users.values()) {
+            user.ws.send(message);
+        }
     }
 }

@@ -16,7 +16,14 @@ export class Connector {
 
         this.#socket.onmessage = (e) => {
             const data = JSON.parse(e.data)
-            console.log(`Received message: ${data}`)
+            switch (data.type){
+                case "subscribed":
+                    console.log(`Subscribed as ${data.username}`)
+                    this.#framework.navigate("/chat")
+                    break;
+                case "chat":
+                    console.log(`Received chat message from ${data.user}: ${data.content}`)
+            }
         }
 
         this.#socket.onerror = (e) => {
@@ -44,7 +51,7 @@ export class Connector {
         this.sendMessage(message)
     }
 
-    
+
 }
 
 
