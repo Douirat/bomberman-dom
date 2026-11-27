@@ -1,40 +1,40 @@
-import {Subscription} from "./frontend/subscription/Subscription.js"
 import { FrameworkBuilder } from "./framework/FrameworkBuilder.js"
 import { Framework } from "./framework/Framework.js"
-
-const connector = new Connector("ws://localhost:3000");
-    connector.connect();
+import { Connector } from "./connection/Connector.js"
 
 const framework = new FrameworkBuilder()
-                    .route("/", Subscribe())
-                    .route("/chat", Chat())
-                    .build()
+.route("/", Subscription())
+.route("/chat", Chat())
+.build()
 framework.init()
 
-export function Subscription(framework){
- return  Framework.virtualize(
-    "form",
-    false,
-    {"id": "subscription-form"},
-    {"submit": (e)=>{
-        e.preventDefault()
-        const form = document.getElementById("subscription-form")
-        const usernameInput = form.querySelector("input[name='username']").value.trim()
-       
-        console.log(`Username submitted: ${usernameInput}`)
-        
-        framework.navigate("/chat")
-    }},
-    [Framework.virtualize("input", false, {"type": "text", "placeholder": "Enter your username", "name": "username", "required": true}), 
-    Framework.virtualize("button", false, {"type": "submit"}, {}, [], "Subscribe")
-],
+const connector = new Connector(framework, "ws://localhost:3000");
+    connector.connect();
 
-)
+export function Subscription(){
+setTimeout(() => {
+    return  Framework.virtualize(
+       "form",
+       false,
+       {"id": "subscription-form"},
+       {"submit": (e)=>{
+           e.preventDefault()
+           const form = document.getElementById("subscription-form")
+           const usernameInput = form.querySelector("input[name='username']").value.trim()
+          
+           console.log(`Username submitted: ${usernameInput}`)
+           
+       }},
+       [Framework.virtualize("input", false, {"type": "text", "placeholder": "Enter your username", "name": "username", "required": true}), 
+       Framework.virtualize("button", false, {"type": "submit"}, {}, [], "Subscribe")
+   ],
+   
+   )
+}, 100)
 }
 
 
 function Chat(){
-    console.log(framework) // use it later to move to user to the game room after the countdown is over.
     const ChatRoom = Framework.virtualize(
        "div",
        false,
@@ -53,6 +53,8 @@ function Chat(){
            }})
        ]
     )
-    return ChatRoom
+    setTimeout(() => {
+        return ChatRoom
+    }, 100)
 }
 
